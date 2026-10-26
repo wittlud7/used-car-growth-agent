@@ -1,0 +1,35 @@
+async page => {
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.locator('button').filter({hasText:'＋ 新对话'}).waitFor();
+  await page.getByRole('button',{name:'＋ 新对话',exact:true}).click();
+  await page.getByRole('textbox',{name:'给 Agent 的消息',exact:true}).fill('我要买车，北京，预算15万以内，卡罗拉，2020年以后，6万公里以内。');
+  await page.getByRole('button',{name:'发送 ↑',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelectorAll('.candidate').length===2&&!document.querySelector('.composer button').disabled,{timeout:120000});
+  await page.getByRole('button',{name:'对比前两辆 →',exact:true}).click();
+  await page.waitForFunction(()=>document.querySelectorAll('.answer').length===2&&!document.querySelector('.composer button').disabled,{timeout:120000});
+  if(!await page.locator('.trace').last().textContent().then(t=>t.includes('对比车辆')))throw Error('No actual comparison tool trace');
+  await page.getByRole('button',{name:'生成待办确认卡 →',exact:true}).first().click();
+  await page.getByRole('button',{name:'确认建立本地待办',exact:true}).waitFor({timeout:120000});
+  const sid=await page.evaluate(()=>localStorage.getItem('intent-online-session'));
+  let response=await page.request.get(new URL('/api/session/'+sid,page.url()).href),s=await response.json();
+  if(s.tasks.length!==0)throw Error('Task created without human confirmation');
+  await page.getByLabel('负责人',{exact:true}).fill('模拟公网验收');
+  await page.getByRole('button',{name:'确认建立本地待办',exact:true}).click();
+  await page.getByText('已建立',{exact:true}).waitFor();
+  response=await page.request.get(new URL('/api/session/'+sid,page.url()).href);s=await response.json();
+  if(s.tasks.length!==1||s.proposal.status!=='confirmed')throw Error('Confirmation failed');
+  if('messages' in s)throw Error('Private API messages exposed');
+  const other=await page.context().browser().newContext();
+  const p=await other.newPage();await p.goto(page.url());
+  const foreign=await p.request.get(new URL('/api/session/'+sid,p.url()).href);
+  if(foreign.status()!==404)throw Error('Cross-visitor session exposure');
+  await other.close();
+  await page.reload();await page.getByText('已建立',{exact:true}).waitFor();
+  await page.setViewportSize({width:1440,height:1000});await page.evaluate(()=>scrollTo(0,0));
+  await page.screenshot({path:'output/online-live-desktop.png',fullPage:true});
+  await page.setViewportSize({width:390,height:844});
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Mobile overflow');
+  await page.screenshot({path:'output/online-live-mobile.png',fullPage:true});
+  await page.setViewportSize({width:1440,height:1000});
+  if(errors.length)throw Error(errors.join(';'));
+}

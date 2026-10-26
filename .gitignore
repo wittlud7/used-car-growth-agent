@@ -18,3 +18,8 @@ node_modules/
 online/.git/
 outputs/
 
+
+/output/*
+!/output/workflow-live-benchmark.json
+/data/*
+

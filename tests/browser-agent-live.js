@@ -1,0 +1,36 @@
+async (page) => {
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.reload();await page.setViewportSize({width:1440,height:1100});
+  await page.locator('#agent-send').waitFor({state:'visible'});
+  await page.locator('#agent-model-status').getByText('DeepSeek',{exact:false}).waitFor();
+  await page.getByLabel('给Agent的消息',{exact:true}).fill('我要买车，北京，预算十五万以内，想看卡罗拉，2020年以后，6万公里以内。');
+  await page.getByRole('button',{name:'发送 ↑',exact:true}).click();
+  await page.locator('#agent-working').waitFor({state:'hidden',timeout:120000});
+  if(await page.locator('#agent-results .agent-result-card').count()!==2)throw Error('Agent did not return the expected two vehicles');
+  if(await page.locator('.agent-tool-step b').filter({hasText:'查询在售车源'}).count()<1)throw Error('Missing real tool-call trace');
+  await page.getByRole('button',{name:'对比前两辆 →',exact:true}).click();
+  await page.locator('#agent-working').waitFor({state:'hidden',timeout:120000});
+  if(await page.locator('.agent-tool-step b').filter({hasText:'对比车辆'}).count()<1)throw Error('Comparison tool was not called');
+  await page.getByRole('button',{name:'生成看车待办 →',exact:true}).first().click();
+  await page.locator('#agent-working').waitFor({state:'hidden',timeout:120000});
+  await page.getByRole('button',{name:'核对并确认 →',exact:true}).waitFor();
+  let response=await page.request.get(new URL('/api/state',page.url()).href);
+  if((await response.json()).tasks.length!==0)throw Error('Model executed task before human confirmation');
+  await page.getByRole('button',{name:'核对并确认 →',exact:true}).click();
+  await page.locator('#match-task-dialog').getByLabel('客户称呼',{exact:true}).fill('模拟Agent验收');
+  await page.getByLabel('待办负责人',{exact:true}).fill('模拟顾问');
+  await page.getByLabel('待办备注',{exact:true}).fill('真实API、模拟数据验收；无真实预约或消息。');
+  await page.getByRole('button',{name:'建立待办',exact:true}).click();
+  await page.locator('#match-task-dialog').waitFor({state:'hidden'});
+  await page.locator('#agent-proposal').getByText('已建立',{exact:true}).waitFor();
+  response=await page.request.get(new URL('/api/state',page.url()).href);
+  if((await response.json()).tasks.length!==1)throw Error('Human confirmation did not create exactly one task');
+  await page.reload();
+  await page.locator('#agent-proposal').getByText('已建立',{exact:true}).waitFor();
+  const turnCount=await page.locator('.agent-answer').count();
+  if(turnCount!==3)throw Error('Conversation did not persist');
+  await page.setViewportSize({width:390,height:844});
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
+  if(overflow || errors.length)throw Error(JSON.stringify({overflow,errors}));
+  return {ok:true,pageErrors:errors,mobileOverflow:overflow,turns:turnCount,checks:['real-DeepSeek-query','model-selected-tools','comparison','proposal-not-execution','human-confirmation','persistent-conversation','mobile-layout']};
+}

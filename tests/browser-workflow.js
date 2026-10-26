@@ -1,0 +1,36 @@
+async page => {
+  const errors=[];page.on('pageerror',e=>errors.push(e.message));
+  await page.reload();
+  await page.locator('[data-view=workflow]').click();
+  await page.locator('#wf-mode').selectOption('rules');
+  await page.locator('#wf-examples').click();
+  await page.locator('#wf-start').click();
+  await page.waitForFunction(()=>document.querySelector('#wf-job-status').textContent.includes('已完成'));
+  if(await page.locator('.wf-item').count()!==6)throw Error('Missing batch results');
+  await page.locator('[data-wf-filter=stop]').click();
+  await page.waitForFunction(()=>document.querySelectorAll('.wf-item').length===1&&document.querySelector('.wf-action')?.textContent==='停止跟进');
+  await page.locator('[data-wf-feedback]').click();
+  await page.waitForFunction(()=>document.querySelector('#wf-outcome option[value=contacted]').disabled);
+  await page.locator('#wf-owner').fill('模拟顾问');
+  await page.locator('#wf-note').fill('模拟验收，核查拒绝联系记录');
+  await page.locator('#wf-feedback-form button[type=submit]').click();
+  await page.locator('#wf-feedback-dialog').waitFor({state:'hidden'});
+  if(await page.locator('.wf-feedback').count()!==1)throw Error('No feedback audit');
+  await page.locator('#wf-input').fill('我要买车，北京，想看卡罗拉');
+  await page.locator('#wf-start').click();
+  await page.waitForFunction(()=>document.querySelector('#wf-job-status').textContent.includes('已完成')&&document.querySelectorAll('.wf-item').length===1&&document.querySelector('.wf-action')?.textContent==='需追问');
+  await page.locator('[data-wf-follow]').click();
+  await page.locator('#wf-follow-text').fill('总预算15万以内');
+  await page.locator('#wf-follow-form button[type=submit]').click();
+  await page.locator('#wf-follow-dialog').waitFor({state:'hidden'});
+  await page.waitForFunction(()=>document.querySelector('#wf-job-status').textContent.includes('已完成')&&document.querySelector('.wf-action')?.textContent==='可匹配');
+  if(await page.locator('.wf-candidates>span').count()!==2)throw Error('Followup did not match two vehicles');
+  await page.reload();await page.locator('[data-view=workflow]').click();
+  await page.locator('.wf-action.match').waitFor();
+  await page.setViewportSize({width:390,height:844});
+  if(await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth))throw Error('Mobile overflow');
+  await page.screenshot({path:'output/workflow-mobile.png',fullPage:true});
+  await page.setViewportSize({width:1440,height:1000});
+  await page.screenshot({path:'output/workflow-desktop.png',fullPage:true});
+  if(errors.length)throw Error(errors.join(';'));
+}

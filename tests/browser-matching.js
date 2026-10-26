@@ -1,0 +1,36 @@
+async (page) => {
+  const errors=[];
+  page.on('pageerror',e=>errors.push(e.message));
+  await page.locator('[data-view=matching]').click();
+  await page.getByRole('button',{name:'我要买车',exact:true}).click();
+  await page.getByLabel('需求描述',{exact:true}).fill('北京，预算13万以内，想买卡罗拉，2022年以后，4万公里以内。');
+  await page.getByRole('button',{name:'匹配车源 →',exact:true}).click();
+  await page.locator('.vehicle-card').first().waitFor();
+  if(await page.locator('.vehicle-card').count()!==1)throw Error('Hard year/mileage/budget conditions not respected');
+  if(await page.locator('#match-budget-max').inputValue()!=='13')throw Error('Changed text did not update budget');
+  await page.getByRole('button',{name:'保存匹配',exact:true}).click();
+  await page.getByRole('button',{name:'已保存 ✓',exact:true}).waitFor();
+  await page.reload();
+  await page.locator('#match-history option').nth(1).waitFor({state:'attached'});
+  const runId=await page.locator('#match-history option').nth(1).getAttribute('value');
+  await page.getByLabel('最近匹配',{exact:true}).selectOption(runId);
+  await page.getByRole('button',{name:'已保存 ✓',exact:true}).waitFor();
+  await page.locator('#match-budget-max').fill('10');
+  await page.getByRole('button',{name:'匹配车源 →',exact:true}).click();
+  await page.getByRole('heading',{name:'暂无符合条件的结果',exact:true}).waitFor();
+  await page.getByRole('button',{name:'我要卖车',exact:true}).click();
+  await page.getByRole('button',{name:'识别并填写 ↓',exact:true}).click();
+  await page.getByText('已填写，请核对条件。',{exact:true}).waitFor();
+  await page.getByRole('button',{name:'匹配买家 →',exact:true}).click();
+  await page.locator('.buyer-match').first().waitFor();
+  if(!(await page.locator('.buyer-match').innerText()).includes('林先生'))throw Error('Expected compatible buyer not returned');
+  if(!(await page.locator('.buyer-match').innerText()).includes('年限接受度待确认'))throw Error('Missing buyer constraints falsely marked satisfied');
+  await page.getByRole('button',{name:'查看咨询 →',exact:true}).click();
+  await page.locator('#detail').getByRole('heading',{name:'林先生',exact:true}).waitFor();
+  await page.locator('[data-view=matching]').click();
+  await page.setViewportSize({width:390,height:844});
+  const overflow=await page.evaluate(()=>document.documentElement.scrollWidth>innerWidth);
+  if(overflow)throw Error('Mobile horizontal overflow');
+  if(errors.length)throw Error(errors.join('; '));
+  return {ok:true,pageErrors:errors,mobileOverflow:overflow,checks:['buy-hard-filters','text-auto-extraction','shortlist-persistence','empty-no-relaxation','seller-price-mileage-extraction','seller-buyer-matching','unknown-constraints-marked','buyer-lead-link','mobile-layout']};
+}

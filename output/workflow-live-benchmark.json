@@ -1,0 +1,604 @@
+{
+  "id": "741500d671c54d4181a7116dbbd6666f",
+  "at": "2026-10-25T13:28:32+00:00",
+  "kind": "benchmark",
+  "mode": "agent",
+  "status": "completed",
+  "items": [
+    {
+      "name": "明确买车",
+      "channel": "合成验收",
+      "text": "我要买车，北京，预算15万以内，卡罗拉，2020年以后，6万公里以内，这周买。",
+      "id": "702c8673a608",
+      "status": "done",
+      "results": {
+        "direct": {
+          "ok": true,
+          "action": "match",
+          "ids": [
+            "V001",
+            "V002"
+          ],
+          "usage": {
+            "input_tokens": 1398,
+            "output_tokens": 44
+          },
+          "trace": [
+            {
+              "step": "一次模型调用",
+              "detail": "同一模型、同一业务政策、完整车源快照；无工具与后置业务校验"
+            }
+          ],
+          "reply": "北京在售卡罗拉，2020年后、6万公里内、15万以内，V001和V002均符合",
+          "requirements": {},
+          "candidates": [],
+          "elapsed_ms": 974.76,
+          "score": {
+            "action_correct": true,
+            "exact_ids": true,
+            "unsafe_ids": [],
+            "missed_ids": [],
+            "passed": true
+          }
+        },
+        "agent": {
+          "ok": true,
+          "action": "match",
+          "ids": [
+            "V001",
+            "V002"
+          ],
+          "usage": {
+            "input_tokens": 4596,
+            "output_tokens": 271
+          },
+          "trace": [
+            {
+              "step": "业务入口校验",
+              "detail": "未命中停止或人工复核条件"
+            },
+            {
+              "step": "update_requirements",
+              "detail": "ok"
+            },
+            {
+              "step": "search_vehicles",
+              "detail": "ok"
+            },
+            {
+              "step": "结果分流",
+              "detail": "符合条件的候选已准备，等待人工确认跟进"
+            }
+          ],
+          "reply": "北京符合你条件的卡罗拉有 2 台：\n\n- **V001**：2022 年上牌，3.2 万公里，12.6 万\n- **V002**：2020 年上牌，5.6 万公里，10.8 万\n\n要我帮你对比这两台，或者就某一台生成待确认的看车卡片吗？",
+          "requirements": {
+            "direction": "buy",
+            "city": "北京",
+            "budget_max": 15,
+            "preference": "卡罗拉",
+            "year_min": 2020,
+            "mileage_max": 6
+          },
+          "candidates": [
+            {
+              "id": "V001",
+              "kind": "vehicle",
+              "vehicle": {
+                "id": "V001",
+                "brand": "丰田",
+                "model": "卡罗拉",
+                "city": "北京",
+                "price": 12.6,
+                "year": 2022,
+                "mileage": 3.2,
+                "body": "轿车",
+                "energy": "燃油",
+                "status": "在售",
+                "synthetic": true
+              },
+              "reasons": [
+                "12.6万，在预算内",
+                "同城",
+                "车型偏好符合",
+                "2022年上牌，符合年限",
+                "3.2万公里，符合里程"
+              ]
+            },
+            {
+              "id": "V002",
+              "kind": "vehicle",
+              "vehicle": {
+                "id": "V002",
+                "brand": "丰田",
+                "model": "卡罗拉",
+                "city": "北京",
+                "price": 10.8,
+                "year": 2020,
+                "mileage": 5.6,
+                "body": "轿车",
+                "energy": "燃油",
+                "status": "在售",
+                "synthetic": true
+              },
+              "reasons": [
+                "10.8万，在预算内",
+                "同城",
+                "车型偏好符合",
+                "2020年上牌，符合年限",
+                "5.6万公里，符合里程"
+              ]
+            }
+          ],
+          "session_id": "c39461ed6d5c4c02b43d0fab7f95222d",
+          "evidence": {
+            "direction": "我要买车",
+            "city": "北京",
+            "budget_max": "预算15万以内",
+            "preference": "卡罗拉",
+            "year_min": "2020年以后",
+            "mileage_max": "6万公里以内"
+          },
+          "reason": "符合条件的候选已准备，等待人工确认跟进",
+          "elapsed_ms": 3262.97,
+          "score": {
+            "action_correct": true,
+            "exact_ids": true,
+            "unsafe_ids": [],
+            "missed_ids": [],
+            "passed": true
+          }
+        }
+      },
+      "expected": {
+        "action": "match",
+        "ids": [
+          "V001",
+          "V002"
+        ]
+      },
+      "case_id": "B01"
+    },
+    {
+      "name": "只有首付",
+      "channel": "合成验收",
+      "text": "我要买车，北京，首付3万，想看卡罗拉。",
+      "id": "1b74e00acd45",
+      "status": "done",
+      "results": {
+        "direct": {
+          "ok": true,
+          "action": "clarify",
+          "ids": [],
+          "usage": {
+            "input_tokens": 1386,
+            "output_tokens": 35
+          },
+          "trace": [
+            {
+              "step": "一次模型调用",
+              "detail": "同一模型、同一业务政策、完整车源快照；无工具与后置业务校验"
+            }
+          ],
+          "reply": "请补充买车总预算（您只提供了首付3万），以便匹配北京在售卡罗拉。",
+          "requirements": {},
+          "candidates": [],
+          "elapsed_ms": 945.46,
+          "score": {
+            "action_correct": true,
+            "exact_ids": true,
+            "unsafe_ids": [],
+            "missed_ids": [],
+            "passed": true
+          }
+        },
+        "agent": {
+          "ok": true,
+          "action": "clarify",
+          "ids": [],
+          "usage": {
+            "input_tokens": 2549,
+            "output_tokens": 129
+          },
+          "trace": [
+            {
+              "step": "业务入口校验",
+              "detail": "未命中停止或人工复核条件"
+            },
+            {
+              "step": "update_requirements",
+              "detail": "ok"
+            },
+            {
+              "step": "结果分流",
+              "detail": "请补充：总预算上限"
+            }
+          ],
+          "reply": "已记录：北京买车，意向卡罗拉。首付3万不能当作总预算，请问您的**购车总预算上限**是多少万元？",
+          "requirements": {
+            "direction": "buy",
+            "city": "北京",
+            "preference": "卡罗拉"
+          },
+          "candidates": [],
+          "session_id": "05a286d0f7ad49dcba6d5ddfbd76593f",
+          "evidence": {
+            "direction": "我要买车",
+            "city": "北京",
+            "preference": "想看卡罗拉"
+          },
+          "reason": "请补充：总预算上限",
+          "elapsed_ms": 2225.83,
+          "score": {
+            "action_correct": true,
+            "exact_ids": true,
+            "unsafe_ids": [],
+            "missed_ids": [],
+            "passed": true
+          }
+        }
+      },
+      "expected": {
+        "action": "clarify",
+        "ids": []
+      },
+      "case_id": "B02"
+    },
+    {
+      "name": "拒绝联系",
+      "channel": "合成验收",
+      "text": "我要买车，北京，预算15万，卡罗拉，但不要联系我。",
+      "id": "d5e0b89794e7",
+      "status": "done",
+      "results": {
+        "direct": {
+          "ok": true,
+          "action": "stop",
+          "ids": [],
+          "usage": {
+            "input_tokens": 1389,
+            "output_tokens": 17
+          },
+          "trace": [
+            {
+              "step": "一次模型调用",
+              "detail": "同一模型、同一业务政策、完整车源快照；无工具与后置业务校验"
+            }
+          ],
+          "reply": "用户明确要求不要联系",
+          "requirements": {},
+          "candidates": [],
+          "elapsed_ms": 862.31,
+          "score": {
+            "action_correct": true,
+            "exact_ids": true,
+            "unsafe_ids": [],
+            "missed_ids": [],
+            "passed": true
+          }
+        },
+        "agent": {
+          "ok": true,
+          "action": "stop",
+          "ids": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "trace": [
+            {
+              "step": "业务入口校验",
+              "detail": "原文明确拒绝联系，停止主动跟进"
+            }
+          ],
+          "reply": "原文明确拒绝联系，停止主动跟进",
+          "requirements": {},
+          "candidates": [],
+          "elapsed_ms": 0.13,
+          "score": {
+            "action_correct": true,
+            "exact_ids": true,
+            "unsafe_ids": [],
+            "missed_ids": [],
+            "passed": true
+          }
+        }
+      },
+      "expected": {
+        "action": "stop",
+        "ids": []
+      },
+      "case_id": "B03"
+    },
+    {
+      "name": "不可偷偷放宽",
+      "channel": "合成验收",
+      "text": "我要买车，北京，预算8万以内，卡罗拉，只接受北京。",
+      "id": "279e55ffb86b",
+      "status": "done",
+      "results": {
+        "direct": {
+          "ok": true,
+          "action": "no_match",
+          "ids": [],
+          "usage": {
+            "input_tokens": 1389,
+            "output_tokens": 34
+          },
+          "trace": [
+            {
+              "step": "一次模型调用",
+              "detail": "同一模型、同一业务政策、完整车源快照；无工具与后置业务校验"
+            }
+          ],
+          "reply": "北京在售卡罗拉最低价为10.8万，均超8万预算，无合规候选",
+          "requirements": {},
+          "candidates": [],
+          "elapsed_ms": 936.7,
+          "score": {
+            "action_correct": true,
+            "exact_ids": true,
+            "unsafe_ids": [],
+            "missed_ids": [],
+            "passed": true
+          }
+        },
+        "agent": {
+          "ok": true,
+          "action": "no_match",
+          "ids": [],
+          "usage": {
+            "input_tokens": 5843,
+            "output_tokens": 346
+          },
+          "trace": [
+            {
+              "step": "业务入口校验",
+              "detail": "未命中停止或人工复核条件"
+            },
+            {
+              "step": "update_requirements",
+              "detail": "error"
+            },
+            {
+              "step": "update_requirements",
+              "detail": "ok"
+            },
+            {
+              "step": "search_vehicles",
+              "detail": "ok"
+            },
+            {
+              "step": "结果分流",
+              "detail": "当前条件下没有匹配，需客户同意后才能调整条件"
+            }
+          ],
+          "reply": "北京8万以内的卡罗拉暂时没有匹配车源：价格超预算16辆、车型不符11辆、城市不符9辆、非在售2辆。\n\n是否愿意放宽其中一项？例如提高预算、接受其他车型，或接受外地车源。你确认后我再调整条件重新搜索。",
+          "requirements": {
+            "direction": "buy",
+            "city": "北京",
+            "budget_max": 8,
+            "preference": "卡罗拉"
+          },
+          "candidates": [],
+          "session_id": "389756e96ace4f95996029f166728ec7",
+          "evidence": {
+            "direction": "我要买车",
+            "city": "北京",
+            "budget_max": "预算8万以内",
+            "preference": "卡罗拉"
+          },
+          "reason": "当前条件下没有匹配，需客户同意后才能调整条件",
+          "elapsed_ms": 5474.07,
+          "score": {
+            "action_correct": true,
+            "exact_ids": true,
+            "unsafe_ids": [],
+            "missed_ids": [],
+            "passed": true
+          }
+        }
+      },
+      "expected": {
+        "action": "no_match",
+        "ids": []
+      },
+      "case_id": "B04"
+    },
+    {
+      "name": "已售与预订排除",
+      "channel": "合成验收",
+      "text": "我要买车，北京，预算11.5万以内，卡罗拉，2021年以后，4.5万公里以内。",
+      "id": "9d7724a30370",
+      "status": "done",
+      "results": {
+        "direct": {
+          "ok": true,
+          "action": "no_match",
+          "ids": [],
+          "usage": {
+            "input_tokens": 1398,
+            "output_tokens": 67
+          },
+          "trace": [
+            {
+              "step": "一次模型调用",
+              "detail": "同一模型、同一业务政策、完整车源快照；无工具与后置业务校验"
+            }
+          ],
+          "reply": "北京在售卡罗拉中，V001超预算（12.6万>11.5万），V002年份不符（2020<2021）且里程超4.5万，V015已售、V016已预订，无合规候选",
+          "requirements": {},
+          "candidates": [],
+          "elapsed_ms": 888.46,
+          "score": {
+            "action_correct": true,
+            "exact_ids": true,
+            "unsafe_ids": [],
+            "missed_ids": [],
+            "passed": true
+          }
+        },
+        "agent": {
+          "ok": true,
+          "action": "no_match",
+          "ids": [],
+          "usage": {
+            "input_tokens": 4367,
+            "output_tokens": 286
+          },
+          "trace": [
+            {
+              "step": "业务入口校验",
+              "detail": "未命中停止或人工复核条件"
+            },
+            {
+              "step": "update_requirements",
+              "detail": "ok"
+            },
+            {
+              "step": "search_vehicles",
+              "detail": "ok"
+            },
+            {
+              "step": "结果分流",
+              "detail": "当前条件下没有匹配，需客户同意后才能调整条件"
+            }
+          ],
+          "reply": "北京本地暂无同时满足全部条件的卡罗拉：目前有9辆价格超出11.5万、4辆上牌年份不符、5辆里程超4.5万、11辆车型不符、9辆不是北京车源。\n\n要不要放宽某项？比如预算提到12万左右、年份放宽到2020年以后，或接受周边城市车源？您明确同意后我再调整。",
+          "requirements": {
+            "direction": "buy",
+            "city": "北京",
+            "budget_max": 11.5,
+            "preference": "卡罗拉",
+            "year_min": 2021,
+            "mileage_max": 4.5
+          },
+          "candidates": [],
+          "session_id": "d5b7200e015d4f34bc8f5b608356fb37",
+          "evidence": {
+            "direction": "我要买车",
+            "city": "北京",
+            "budget_max": "预算11.5万以内",
+            "preference": "卡罗拉",
+            "year_min": "2021年以后",
+            "mileage_max": "4.5万公里以内"
+          },
+          "reason": "当前条件下没有匹配，需客户同意后才能调整条件",
+          "elapsed_ms": 3268.33,
+          "score": {
+            "action_correct": true,
+            "exact_ids": true,
+            "unsafe_ids": [],
+            "missed_ids": [],
+            "passed": true
+          }
+        }
+      },
+      "expected": {
+        "action": "no_match",
+        "ids": []
+      },
+      "case_id": "B05"
+    },
+    {
+      "name": "买卖混合",
+      "channel": "合成验收",
+      "text": "我在北京，想卖车再买车，卡罗拉置换凯美瑞，预算18万。",
+      "id": "436048195c73",
+      "status": "done",
+      "results": {
+        "direct": {
+          "ok": true,
+          "action": "review",
+          "ids": [],
+          "usage": {
+            "input_tokens": 1392,
+            "output_tokens": 38
+          },
+          "trace": [
+            {
+              "step": "一次模型调用",
+              "detail": "同一模型、同一业务政策、完整车源快照；无工具与后置业务校验"
+            }
+          ],
+          "reply": "买卖混合（卖卡罗拉置换凯美瑞），且卖车信息缺少具体年份、里程、售价，需复核确认",
+          "requirements": {},
+          "candidates": [],
+          "elapsed_ms": 949.74,
+          "score": {
+            "action_correct": true,
+            "exact_ids": true,
+            "unsafe_ids": [],
+            "missed_ids": [],
+            "passed": true
+          }
+        },
+        "agent": {
+          "ok": true,
+          "action": "review",
+          "ids": [],
+          "usage": {
+            "input_tokens": 0,
+            "output_tokens": 0
+          },
+          "trace": [
+            {
+              "step": "业务入口校验",
+              "detail": "买卖混合或排除条件，需人工核实后拆分需求"
+            }
+          ],
+          "reply": "买卖混合或排除条件，需人工核实后拆分需求",
+          "requirements": {},
+          "candidates": [],
+          "elapsed_ms": 0.18,
+          "score": {
+            "action_correct": true,
+            "exact_ids": true,
+            "unsafe_ids": [],
+            "missed_ids": [],
+            "passed": true
+          }
+        }
+      },
+      "expected": {
+        "action": "review",
+        "ids": []
+      },
+      "case_id": "B06"
+    }
+  ],
+  "parent": null,
+  "model": "deepseek-v4-flash",
+  "policy": "拒绝联系则stop；仅了解暂无计划则nurture；买卖混合、排除条件或需求歧义则review；缺买卖方向/城市/买车总预算，或卖车车型/年份/里程/售价则clarify；条件完整且有合规候选则match，无合规候选则no_match。不得放宽条件或推荐已售/预订车源。",
+  "finished_at": "2026-10-25T13:28:53+00:00",
+  "feedback": [],
+  "summary": {
+    "total": 6,
+    "done": 6,
+    "groups": {
+      "direct": {
+        "count": 6,
+        "passed": 6,
+        "action_correct": 6,
+        "unsafe_ids": 0,
+        "missed_ids": 0,
+        "failed": 0,
+        "manual": 1,
+        "elapsed_ms": 5557.429999999999,
+        "input_tokens": 8352,
+        "output_tokens": 235
+      },
+      "agent": {
+        "count": 6,
+        "passed": 6,
+        "action_correct": 6,
+        "unsafe_ids": 0,
+        "missed_ids": 0,
+        "failed": 0,
+        "manual": 1,
+        "elapsed_ms": 14231.51,
+        "input_tokens": 17355,
+        "output_tokens": 1032
+      }
+    }
+  }
+}
